@@ -1,0 +1,36 @@
+﻿.question-answers{
+    font-size: 16px;
+    line-height: 12px;
+}
+
+.cat-number{
+    text-align: center;
+    font-weight: bold;
+}
+
+.question-number{
+    text-align: center;
+}
+
+.view-questions-var-container {
+    display: grid;
+    grid-template-columns: 49% 2% 49%;
+    align-items: center;
+}
+
+#variants-divider {
+    border-left: 1.5px solid lightgray;
+    height: 80%;
+    left: 50%;
+}
+
+.category-text {
+    text-align: center;
+    font-size: 16px;
+}
+
+.question-text {
+    text-align: left;
+    font-size: 18px;
+    margin-bottom: 25px;
+}

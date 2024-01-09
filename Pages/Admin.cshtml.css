@@ -1,0 +1,200 @@
+﻿body {
+}
+
+.radio-button {
+}
+
+.user-button-2 {
+    display: flex;
+    position: fixed;
+    align-items: center;
+    gap: 8px;
+    bottom: 18%;
+    left: 50%;
+    transform: translate(-50%);
+}
+
+.user-button {
+    display: flex;
+    position: fixed;
+    align-content: center;
+    align-items: center;
+    gap: 8px;
+    bottom: 10%;
+    left: 50%;
+    transform: translate(-50%);
+}
+
+@media screen and (min-width: 750px) {
+    .user-button {
+        flex-direction: row;
+    }
+}
+
+@media screen and (max-width: 750px) {
+    .user-button {
+        gap: 2px;
+        flex-direction: column;
+    }
+}
+
+.user-button > button, .user-button-2 > button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    background-color: #3b7bf7;
+    color: white;
+    border: none;
+    padding: 6px 12px 6px 12px;
+    border-radius: 0.5rem;
+    font-size: 16px;
+    min-width: 250px;
+}
+
+    .user-button > button:disabled, .user-button-2 > button:disabled {
+        background-color: lightgray;
+        color: gray;
+        cursor: not-allowed;
+    }
+
+.material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 320, 'GRAD' 0, 'opsz' 48;
+    font-size: 18px;
+}
+
+.material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 800, 'GRAD' 0, 'opsz' 48;
+}
+
+.add-user-form {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.names 
+{
+    flex-direction: row;
+    display: flex;
+    gap: 18px;
+}
+
+.checkbox-menu {
+    display: flex;
+    align-items: center;
+    /*justify-content: space-between;*/
+    justify-content: left;
+    gap: 8px;
+}
+
+.checkbox-menu > input[type=checkbox] {
+    transform: scale(1.2);
+    margin: 5px;
+}
+
+.rows {
+    cursor: default;
+    transition: background-color ease-in 0.1s;
+    vertical-align: central;
+}
+
+.user-rb:focus {
+    outline: none;
+}
+
+.names > div {
+    display: flex;
+    flex-direction: column;
+}
+
+.add-user-btns {
+    display: flex;
+    gap: 5px;
+    flex-direction: row-reverse;
+}
+
+.add-user-btns > button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: .7rem;
+    border: none;
+    gap: 5px;
+    height: 35px;
+    padding: 18px;
+}
+
+#add-user-submit {
+    color: white;
+    background-color: #3b7bf7;
+}
+
+.admin-diags {
+    margin-top: 12%;
+    border: solid 2px black;
+    border-radius: .8rem;
+    padding: 30px 20px 30px 20px;
+}
+
+.user-rb {
+    opacity: 0;
+}
+
+.add-category-form {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.add-category-form > div {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.add-category-btns {
+    margin-top: 20px;   
+}
+
+.add-category-btns > button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.7rem;
+    border: none;
+    gap: 5px;
+    height: 35px;
+    padding: 18px;
+}
+
+#add-category-submit {
+    color: white;
+    background-color: #3b7bf7;
+}
+
+.add-speciality-btns {
+    margin-top: 20px;
+}
+
+    .add-speciality-btns > button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.7rem;
+    border: none;
+    gap: 5px;
+    height: 35px;
+    padding: 18px
+}
+
+#add-speciality-submit {
+    color: white;
+    background-color: #3b7bf7;
+}
+
+.add-speciality-form > div {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}

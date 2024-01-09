@@ -1,0 +1,258 @@
+﻿@page
+@model pdftest.Pages.HomeModel
+@using System.Security.Claims;
+@{
+    @*string ticket = System.Web.HttpUtility.ParseQueryString(HttpContext.Request.QueryString.Value).Get("ticket");*@
+    @*int.TryParse(ticket, out parsedTicket);*@
+
+    int ticket = 0;
+    string speciality = User.FindFirstValue("speciality");
+}
+
+@*<script src="/js/home.js"></script>*@
+
+@section scripts {
+    <script type="text/javascript">
+        var addQuestionDialog = document.getElementById('add-question-dialog');
+        var addQuestionDialogMenu = document.getElementById('add-question-menu');
+        var viewQuestionsDialog = document.getElementById('view-questions-dialog');
+        var viewQuestionsDialogMenu = document.getElementById('view-questions-menu');
+        var questionType = document.getElementById('add-question-type');
+        var questionPoints = document.getElementById('add-question-points');
+        var answers = document.getElementsByClassName('answers');
+        var checkboxes = document.getElementsByClassName('checkboxes');
+        var questionPointOptions = document.getElementsByClassName('questionPointOptions');
+        var addQuestionTicket = document.getElementById('add-question-ticket');
+        var addQuestionButton = document.getElementById('add-question-send-button');
+        var viewQuestionsButton = document.getElementById('view-questions');
+        var generateTestsButton = document.getElementById('generate-tests');
+
+        viewQuestionsButton.addEventListener('click', () => {
+            location.href = location.origin + '/Questions'
+        })
+
+        generateTestsButton.addEventListener('click', () => {
+            location.href = location.origin + '/Test?ticket=1'
+        })
+
+        function openViewQuestionsModal(){
+            viewQuestionsDialog.showModal();
+        }
+
+        function openAddQuestionModal(){
+            addQuestionDialog.showModal();
+        }
+
+        addQuestionTicket.addEventListener('change', () => {
+            if(addQuestionTicket.value == "default") addQuestionButton.disabled = true;
+            else addQuestionButton.disabled = false;
+        })
+
+        questionType.addEventListener('change', () => {
+
+            let closedAnswers = document.getElementsByClassName('answers-container');
+            let openAnswers = document.getElementsByClassName('open-answers-container');
+
+            if (questionType.value == 'closed')
+            {
+                questionPoints.value = '2';
+                for(let i = 0; i < questionPointOptions.length; i++)
+                {
+                    questionPointOptions[i].disabled = true;
+                    questionPointOptions[0].disabled = false;
+                }
+                for (let i = 0; i < answers.length; i++) 
+                { 
+                    answers[i].disabled = false;
+                    checkboxes[i].disabled = false;
+                }
+
+                // for (let i = 0; i < closedAnswers.length; i++) {
+                //     closedAnswers[i].style.visibility = 'visible';
+                //     closedAnswers[i].style.display = 'block';
+                //     openAnswers[i].style.display = 'none';
+                //     openAnswers[i].style.visibility = 'hidden';
+                // }
+
+                document.getElementById('closed-a').style.display = 'block';
+                document.getElementById('closed-b').style.display = 'block';
+                document.getElementById('closed-a').style.visibility = 'visible';
+                document.getElementById('closed-b').style.visibility = 'visible';
+
+                document.getElementById('open-a').style.display = 'none';
+                document.getElementById('open-b').style.display = 'none';
+                document.getElementById('open-a').style.visibility = 'hidden';
+                document.getElementById('open-b').style.visibility = 'hidden';
+            }
+        })
+        questionType.addEventListener('change', () => {
+            if (questionType.value == 'open') 
+            {
+                questionPoints.value = '4';
+                for (let i = 0; i < questionPointOptions.length; i++) 
+                {
+                    questionPointOptions[i].disabled = false;
+                    questionPointOptions[0].disabled = true;
+                }
+                for (let i = 0; i < answers.length; i++) 
+                {
+                    answers[i].disabled = true;
+                    checkboxes[i].disabled = true;
+                    answers[i].value = ""; //Когато сменяме dropdown менюто за добавяне на въпрос от 'Затворен отговор' на 'Отворен отговор' се анулира текста в текстовите полета за отговорите А) Б) В) и Г), за допълнителна индикация на потребителя, че е избрана опция 'Отворен отговор'
+                }
+
+                document.getElementById('closed-a').style.display = 'none';
+                document.getElementById('closed-b').style.display = 'none';
+                document.getElementById('closed-a').style.visibility = 'hidden';
+                document.getElementById('closed-b').style.visibility = 'hidden';
+
+                document.getElementById('open-a').style.display = 'block';
+                document.getElementById('open-b').style.display = 'block';
+                document.getElementById('open-a').style.visibility = 'visible';
+                document.getElementById('open-b').style.visibility = 'visible';
+            }
+        })
+        addQuestionDialog.addEventListener('click', () => addQuestionDialog.close());
+        addQuestionDialogMenu.addEventListener('click', (e) => e.stopPropagation());
+        viewQuestionsDialog.addEventListener('click', () => viewQuestionsDialog.close());
+        viewQuestionsDialogMenu.addEventListener('click', (e) => e.stopPropagation());
+        
+    </script>
+}
+
+<div class="text-center">
+    <div class="page-container">
+        <div class="header-text">
+            <h1> Здравей, @User.Identity.Name!</h1> @*вземане на името чрез автентикацията*@
+            <h2> Вашата специалност: @User.FindFirstValue("speciality")</h2>
+        </div>
+        <div class="card-container">
+            <div>
+                <img src="images/questions.png" width="75" height="75">
+                <h5>Нашата база данни съдържа над <span id="db-stats">@DbOperations.GetQuestionsCount()</span> въпроса</h5>
+            </div>
+            <div>
+                <img src="images/pdf.png" height="75" width="75"/>
+                <h5>До сега са генерирани <span id="db-stats">@DbOperations.GetGeneratedTestsCount()</span> билета, използвайки нашия уебсайт</h5>
+            </div>
+            <div>
+                <img src="images/profession.png" width="75" height="75" />
+                <h5>Имаме билети за държавни изпити за <span id="db-stats">@DbOperations.GetSpecialitiesCount()</span> специалности</h5>
+            </div>
+        </div>
+        <div class="btn-container">
+            <button class="question-btn" id="add-question-btn" onclick="openAddQuestionModal()">Добави нов въпрос</button>
+            <dialog id="add-question-dialog">
+                <form method="post" asp-page-handler="UploadQuestion">
+                <div id="add-question-menu">
+                    <div id="add-question-top-bar">
+                        <input type="hidden" name="speciality" value="@User.FindFirstValue("speciality")"/>
+                        <select class="add-question-dropdown" id="add-question-type">
+                            <option value="open">Отворен отговор</option>
+                            <option value="closed">Затворен отговор</option>
+                        </select>
+                        <select name="ticketNumber" class="add-question-dropdown" id="add-question-ticket" required>
+                            <option selected disabled value="default">Изпитен билет</option>
+                            <option value="1">Билет 1</option>
+                            <option value="2">Билет 2</option>
+                            <option value="3">Билет 3</option>
+                            <option value="4">Билет 4</option>
+                            <option value="5">Билет 5</option>
+                            <option value="6">Билет 6</option>
+                            <option value="7">Билет 7</option>
+                            <option value="8">Билет 8</option>
+                            <option value="9">Билет 9</option>
+                            <option value="10">Билет 10</option>
+                            <option value="11">Билет 11</option>
+                            <option value="12">Билет 12</option>
+                            <option value="13">Билет 13</option>
+                            <option value="14">Билет 14</option>
+                            <option value="15">Билет 15</option>
+                            <option value="16">Билет 16</option>
+                            <option value="17">Билет 17</option>
+                            <option value="18">Билет 18</option>
+                        </select>
+                        <select name="questionPoints" class="add-question-dropdown" id="add-question-points">
+                            <option class="questionPointOptions" value="2" disabled>2 точки</option>
+                            <option class="questionPointOptions" value="4" selected>4 точки</option>
+                            <option class="questionPointOptions" value="6">6 точки</option>
+                            <option class="questionPointOptions" value="8">8 точки</option>
+                        </select>
+                        <input name="category" class="category-input" type="number" placeholder="Категория" min="1" max="99" required/>
+                    </div>
+                    <div id="add-question-window">
+                        <div class="question-variant-container question-a">
+                            <h4 class="var1-title">Вариант 1</h4>
+                            <textarea name="questionText1" class="add-question-text" rows="12" cols="65" placeholder="Въведете условие на въпроса" required></textarea>
+                            <br />
+                            <br />
+                            <div @* class="answers-container" *@ class="closed-answer" id="closed-a">
+                                <label class="answers-title">Въведете отговори и изберете верен отговор:</label>
+                                <div>
+                                    <input type="checkbox" class="checkboxes" value="true" name="correctAnswerA1" disabled/>
+                                    <input name="answerA1" class="answers" id="answer-A" type="text" placeholder="Отговор А)" size="65" disabled required />
+                                </div>
+                                <div>
+                                        <input type="checkbox" class="checkboxes" value="true" name="correctAnswerB1" disabled />
+                                    <input name="answerB1" class="answers" id="answer-B" type="text" placeholder="Отговор Б)" size="65" disabled required />
+                                </div>
+                                <div>
+                                        <input type="checkbox" class="checkboxes" value="true" name="correctAnswerC1" disabled />
+                                    <input name="answerC1" class="answers" id="answer-C" type="text" placeholder="Отговор В)" size="65" disabled required />
+                                </div>
+                                <div>
+                                        <input type="checkbox" class="checkboxes" value="true" name="correctAnswerD1" disabled />
+                                    <input name="answerD1" class="answers" id="answer-D" type="text" placeholder="Отговор Г)" size="65" disabled required />
+                                </div>
+                            </div>
+                            <div class="open-answers-container" id="open-a">
+                                <label class="open-answers-title">Ако желаете въведете примерен отговор на задачата</label>
+                                <textarea rows="3" cols="65" name="openAnswer1"></textarea>
+                            </div>
+                        </div>
+                        <div id="add-question-divider"></div>
+
+
+                        <div class="question-variant-container question-b">
+                            <h4 class="var2-title">Вариант 2</h4>
+                            <textarea name="questionText2" class="add-question-text" rows="12" cols="65" placeholder="Въведете условие на въпроса" required></textarea>
+                            <br />
+                            <br />
+                            <div class="closed-answer" id="closed-b">
+                                <label class="answers-title">Въведете отговори и изберете верен отговор:</label>
+                                <div class="answers-container">
+                                    <div>
+                                        <input type="checkbox" class="checkboxes" value="true" name="correctAnswerA2" disabled />
+                                        <input name="answerA2" class="answers" id="answer-A" type="text" placeholder="Отговор А)" size="65" disabled required />
+                                    </div>
+                                    <div>
+                                        <input type="checkbox" class="checkboxes" value="true" name="correctAnswerB2" disabled />
+                                        <input name="answerB2" class="answers" id="answer-B" type="text" placeholder="Отговор Б)" size="65" disabled required />
+                                    </div>
+                                    <div>
+                                        <input type="checkbox" class="checkboxes" value="true" name="correctAnswerC2" disabled />
+                                        <input name="answerC2" class="answers" id="answer-C" type="text" placeholder="Отговор В)" size="65" disabled required />
+                                    </div>
+                                    <div>
+                                        <input type="checkbox" class="checkboxes" value="true" name="correctAnswerD2" disabled />
+                                        <input name="answerD2" class="answers" id="answer-D" type="text" placeholder="Отговор Г)" size="65" disabled required />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="open-answers-container" id="open-b">
+                                <label class="open-answers-title">Ако желаете въведете примерен отговор на задачата</label>
+                                <textarea rows="3" cols="65" name="openAnswer2"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="add-question-bottom-bar">
+                        <input type="submit" id="add-question-send-button" value="Публикувайте въпроса" disabled>
+                    </div>
+                </div>
+                </form>
+            </dialog>
+            <button class="question-btn" id="generate-tests">Генерирай тест</button>
+            <button class="question-btn" id="view-questions">Прегледай всички въпроси</button>
+        </div>
+    </div>
+</div>

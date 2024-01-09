@@ -1,0 +1,303 @@
+﻿@page
+@model pdftest.Pages.AdminModel
+@{
+}
+
+@*
+<script src="~/js/admin.js"></script>
+*@
+
+<div>
+    <table class="table table-responsive">
+            <tr>
+                <th>@*Избери*@</th>
+                <th>Име</th>
+                <th>Фамилия</th>
+                <th>Имейл</th>
+                <th>Училище</th>
+                <th>Специалност</th>
+                <th>Админ</th>
+            </tr>
+        @foreach(var user in DbOperations.GetAllUserData())
+        {
+            <tr class="rows">
+                <th class="radio-button"><input type="radio" class="user-rb" name="user-rb" value="@user.Id" /></th>
+                <th>@user.FirstName</th>
+                <th>@user.LastName</th>
+                <th>@user.Email</th>
+                <th>@user.School</th>
+                <th>@user.Speciality</th>
+                <th><input type="checkbox" class="checkbox-isadmin" checked="@(user.IsAdmin == "True" ? "checked" : null)"/></th>
+            </tr>
+        }
+    </table>
+
+    <dialog id="add-user-diag" class="admin-diags">
+        <form method="post" asp-page-handler="CreateAccount">
+            <div class="add-user-form">
+                <div class="names">
+                    <div class="name-input">
+                        <label for="firstname">Име</label>
+                        <input type="text" name="firstname"/>
+                    </div>
+                    <div class="surname-input">
+                        <label for="lastname">Фамилия</label>
+                        <input type="text" name="lastname"/>
+                    </div>
+                </div>
+                    <label for="email">Имейл</label>
+                    <input type="email" name="email"/>
+                <label for="password">Парола</label>
+                <input type="password" name="password"/>
+                <label for="school">Училище</label>
+                <select name="school">
+                    @foreach (string school in DbOperations.GetSchools())
+                    {
+                        <option>@school</option>
+                    }
+                </select>
+                <label for="speciality">Специалност</label>
+                <select name="speciality">
+                    @foreach (string speciality in DbOperations.GetSpecialities())
+                    {
+                        <option>@speciality</option>
+                    }
+                </select>
+                <div class="checkbox-menu">
+                    <label for="isAdmin">Администратор</label>
+                    <input type="checkbox" name="isadmin" value="true"/>
+                </div>
+                <div class="add-user-btns">
+                    <button type="submit" id="add-user-submit">Създай акаунт</button>
+                    <button id="add-user-cancel" type="reset">Назад</button>
+                </div>
+            </div>
+        </form>
+    </dialog>
+    <dialog id="edit-user-diag" class="admin-diags">
+        <form method="post" asp-page-handler="EditAccount">
+            <div class="add-user-form">
+                <input type="hidden" name="id" id="edit-id"/>
+                <div class="names">
+                    <div class="name-input">
+                        <label for="firstname">Име</label>
+                        <input type="text" name="firstname" id="edit-fname" />
+                    </div>
+                    <div class="surname-input">
+                        <label for="lastname">Фамилия</label>
+                        <input type="text" name="lastname" id="edit-lname" />
+                    </div>
+                </div>
+                <label for="email">Имейл</label>
+                <input type="email" name="email" id="edit-email" />
+                <label for="password">Парола</label>
+                <input type="password" name="password" id="edit-pass" />
+                <label for="school">Училище</label>
+                <select name="school" id="edit-school">
+                    @foreach (string school in DbOperations.GetSchools())
+                    {
+                        <option >@school</option>
+                    }
+                </select>
+                <label for="speciality">Специалност</label>
+                <select name="speciality" id="edit-speciality">
+                    @foreach (string speciality in DbOperations.GetSpecialities())
+                    {
+                        <option>@speciality</option>
+                    }
+                </select>
+                <div class="checkbox-menu">
+                    <label for="isAdmin">Администратор</label>
+                    <input type="checkbox" name="isadmin" value="true" id="edit-isadmin"/>
+                </div>
+                <div class="add-user-btns">
+                    <button type="submit" id="add-user-submit">Запази промените</button>
+                    <button id="edit-user-cancel" type="reset">Назад</button>
+                </div>
+            </div>
+        </form>
+    </dialog>
+    <dialog id="add-category-dialog" class="admin-diags">
+        <form method="post" asp-page-handler="AddCategory">
+            <div class="add-category-form">
+                <div class="ticket">
+                    <label for="ticket">Билет</label>
+                    <input type="number" name="ticket" id="ticket" min="0" max="99"/>
+                </div>
+                <div class="cat-num-input">
+                    <label for="category-num">Категория</label>
+                    <input type="number" name="categoryNum" id="category-num" min="0" max="99"/>
+                </div>
+                <div>
+                    <label for="category-text">Текст</label>
+                    <input type="text" name="categoryText" id="category-text"/>
+                </div>
+                <div>
+                    <label for="points">Точки</label>
+                    <input type="number" name="points" id="points" min="0" max="99" />
+                </div>
+                <div class="add-category-btns">
+                    <button type="submit" id="add-category-submit">Запази категория</button>
+                    <button type="reset" id="add-category-cancel">Назад</button>
+                </div>
+            </div>
+        </form>
+    </dialog>
+    <dialog id="add-speciality-dialog" class="admin-diags">
+        <form method="post" asp-page-handler="AddSpeciality">
+            <div class="add-speciality-form">
+                <div>
+                    <label for="speciality">Специалност</label>
+                    <input type="text" required name="speciality" id="speciality" />
+                </div>
+                <div class="add-speciality-btns">
+                    <button type="submit" id="add-speciality-submit">Добави специалност</button>
+                    <button type="reset" id="add-speciality-cancel">Назад</button>
+                </div>
+            </div>
+        </form>
+    </dialog>
+
+    <div class="user-button">
+        <button id="edit-user-btn">
+            <span class="material-symbols-outlined">edit</span>Редактирай потребител
+        </button>
+        <button id="add-user-btn">
+            <span class="material-symbols-outlined">person_add</span>Прибави нов потребител
+        </button>
+        <button id="delete-user-btn">
+            <span class="material-symbols-outlined" id="delete-user">delete</span>Изтрий потребител
+        </button>
+        
+    </div>
+    <div class="user-button-2">
+        <button id="add-category-btn">
+            <span class="material-symbols-outlined">category</span>Прибави категория
+        </button>
+        <button id="add-speciality-btn">
+            <span class="material-symbols-outlined">group</span>Прибави специалност
+        </button>
+    </div>
+</div>
+
+<script>
+    var addUserDialog = document.getElementById("add-user-diag");
+    var addUserBtn = document.getElementById("add-user-btn");
+    var addCancelButton = document.getElementById("add-user-cancel");
+    var editUserDialog = document.getElementById("edit-user-diag");
+    var editUserBtn = document.getElementById('edit-user-btn');
+    var deleteUserBtn = document.getElementById('delete-user-btn');
+    var editCancelButton = document.getElementById('edit-user-cancel');
+    var editform = document.getElementById("edit-form");
+    var addSpecialityButton = document.getElementById("add-speciality-btn");
+    var specialityDialog = document.getElementById("add-speciality-dialog");
+    var addSpecialityCancel = document.getElementById("add-speciality-cancel");
+
+    addUserBtn.addEventListener('click', () => {
+        addUserDialog.showModal();
+    })
+
+    addCancelButton.addEventListener('click', () => {
+        addUserDialog.close();
+    });
+
+    addSpecialityButton.addEventListener('click', () => {
+        specialityDialog.showModal();
+    })
+
+    addSpecialityCancel.addEventListener('click', () => {
+        specialityDialog.close();
+    })
+
+    var addCategoryBtn = document.getElementById('add-category-btn');
+    var addCategoryCancel = document.getElementById('add-category-cancel');
+    var addCategoryDialog = document.getElementById('add-category-dialog');
+
+    addCategoryBtn.addEventListener('click', () => {
+        addCategoryDialog.showModal();
+    })
+    addCategoryCancel.addEventListener('click', () => {
+        addCategoryDialog.close();
+    })
+
+    editUserBtn.addEventListener('click', function () {
+        $.ajax({
+            url: '/Admin?handler=ReturnUser',
+            method: 'GET',
+            data: { id: userId },
+            success: function (user) {
+                document.getElementById('edit-id').value = user.id;
+                document.getElementById('edit-fname').value = user.firstName;
+                document.getElementById('edit-lname').value = user.lastName;
+                document.getElementById('edit-email').value = user.email;
+                document.getElementById('edit-pass').value = user.password;
+                document.getElementById('edit-school').value = user.school;
+                document.getElementById('edit-speciality').value = user.speciality;
+                document.getElementById('edit-isadmin').checked = (user.isAdmin === "True");
+                console.log(user);
+                editUserDialog.showModal();
+            }
+        })
+    })
+
+    editCancelButton.addEventListener('click', () => {
+        editUserDialog.close();
+    })
+
+    deleteUserBtn.addEventListener('click', function () {
+        $.ajax({
+            url: "/Admin?handler=DeleteUser",
+            type: "POST",
+            data: { id: userId }
+        }).done(function () {
+            location.replace("/Admin");
+        })
+    })
+
+    var isAdminCheckboxes = document.querySelectorAll('.checkbox-isadmin');
+    isAdminCheckboxes.forEach(function (checkbox) {
+        console.log(checkbox);
+        checkbox.addEventListener('click', function (event) {
+            event.preventDefault();
+        })
+    })
+
+    var userId = 0;
+    function checkId() {
+        if (userId == 0) {
+            editUserBtn.disabled = true;
+            deleteUserBtn.disabled = true;
+        }
+        else {
+            editUserBtn.disabled = false;
+            deleteUserBtn.disabled = false;
+        }
+    }
+    checkId();
+    var isAdminCheckboxes = document.querySelectorAll('.checkbox-isadmin');
+    isAdminCheckboxes.forEach(function (checkbox) {
+        console.log(checkbox);
+        checkbox.addEventListener('click', function (event) {
+            event.preventDefault();
+        })
+    })
+    var rows = document.getElementsByClassName("rows");
+    for (var i = 0; i < rows.length; i++) {
+        rows[i].addEventListener('click', function () {
+            const rb = this.querySelector('input[name="user-rb"]');
+            rb.checked = true;
+            userId = rb.value;
+            rb.focus();
+            checkId();
+            const radBtns = document.getElementsByName("user-rb");
+            for (var j = 0; j < radBtns.length; j++) {
+                if (radBtns[j].checked == true) {
+                    rows[j].style.backgroundColor = "#edf2f7";
+                }
+                else {
+                    rows[j].style.backgroundColor = "white";
+                }
+            }
+        })
+    }
+</script>

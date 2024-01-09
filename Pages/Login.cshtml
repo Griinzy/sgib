@@ -1,0 +1,22 @@
+﻿@page
+@model pdftest.Pages.LoginModel
+@{
+}
+
+<div>
+     <form method="post" asp-page-handler="Login">
+     <div class="login-container">
+         <h1 class="display-4">Вход</h1>
+         <input type="email" name="emailText" placeholder="Имейл" required />
+         <input type="password" name="passwordText" placeholder="Парола" required />
+         <div class="incorrect-password">
+             <p>@Model.IncorrectPassword</p>
+         </div>
+         <div class="checkbox">
+             <input type="checkbox" name="remember" id="remember" value="true"/>
+             <label for="remember">Запомни ме</label>
+         </div>  
+         <input type="submit" value="Вход" class="login-btn"/>
+     </div>
+     </form>
+</div>

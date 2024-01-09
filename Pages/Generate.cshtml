@@ -1,0 +1,63 @@
+﻿@page
+@model pdftest.Pages.GenerateModel
+@using System.Security.Claims;
+@{
+    string ticket = System.Web.HttpUtility.ParseQueryString(HttpContext.Request.QueryString.Value).Get("ticket");
+    int parsedTicket;
+    int.TryParse(ticket, out parsedTicket);
+    string speciality = User.FindFirstValue("speciality");
+    int specialityId = DbOperations.GetSpecialityId(speciality);
+}
+
+<div class="selection-and-speciality">
+    <select id="ticket-dropdown"> 
+        <option value="1" selected>Билет 1</option>
+        <option value="2">Билет 2</option>
+        <option value="3">Билет 3</option>
+        <option value="4">Билет 4</option>
+        <option value="5">Билет 5</option>
+        <option value="6">Билет 6</option>
+        <option value="7">Билет 7</option>
+        <option value="8">Билет 8</option>
+        <option value="9">Билет 9</option>
+        <option value="10">Билет 10</option>
+        <option value="11">Билет 11</option>
+        <option value="12">Билет 12</option>
+        <option value="13">Билет 13</option>
+        <option value="14">Билет 14</option>
+        <option value="15">Билет 15</option>
+        <option value="16">Билет 16</option>
+        <option value="17">Билет 17</option>
+        <option value="18">Билет 18</option>
+    </select>
+    <h5>Специалност: @speciality</h5>
+</div>
+<hr />
+<div class="questions-header">
+    <h4>Вариант:</h4>
+    <h4>Точки:</h4>
+</div>
+
+@for (int i = 1; i <= DbOperations.GetCategoriesCount(speciality, parsedTicket); i++)
+{       
+    <div class="category">
+        <h4>Категория @i</h4>
+        <h6>@DbOperations.GetCategoryDescription($"{specialityId}_{parsedTicket}_{i}")</h6>
+    </div>
+    <div class="question">
+
+    </div>
+}
+
+
+<script>
+    var ticketDropdown = document.getElementById('ticket-dropdown');
+    ticketDropdown.addEventListener('change', () => {
+        location.replace(location.origin + "/Generate?ticket=" + ticketDropdown.value);
+    })
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const param = urlParams.get('ticket');
+    ticketDropdown.value = param;
+    if (param == null) location.replace(location.origin + "/Generate?ticket=1");
+</script>

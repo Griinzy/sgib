@@ -1,0 +1,259 @@
+﻿@page
+@model pdftest.Pages.TestModel
+@using System.Security.Claims;
+@{
+    string ticket = System.Web.HttpUtility.ParseQueryString(HttpContext.Request.QueryString.Value).Get("ticket");
+    int parsedTicket;
+    int.TryParse(ticket, out parsedTicket);
+    string speciality = User.FindFirstValue("speciality");
+    int specialityId = DbOperations.GetSpecialityId(speciality);
+    //PdfOperatons.CreateDocument();
+
+    Random rnd = new Random();
+}
+
+<div class="select-ticket">
+    <select id="ticket-dropdown">
+        <option value="1" selected>Билет 1</option>
+        <option value="2">Билет 2</option>
+        <option value="3">Билет 3</option>
+        <option value="4">Билет 4</option>
+        <option value="5">Билет 5</option>
+        <option value="6">Билет 6</option>
+        <option value="7">Билет 7</option>
+        <option value="8">Билет 8</option>
+        <option value="9">Билет 9</option>
+        <option value="10">Билет 10</option>
+        <option value="11">Билет 11</option>
+        <option value="12">Билет 12</option>
+        <option value="13">Билет 13</option>
+        <option value="14">Билет 14</option>
+        <option value="15">Билет 15</option>
+        <option value="16">Билет 16</option>
+        <option value="17">Билет 17</option>
+        <option value="18">Билет 18</option>
+    </select>
+</div>
+<form method="post" id="questions-form">
+<table class="questions-table" style="margin: auto">
+        <tr>
+            <th></th>
+            <th>Точки:</th>
+            <th>Вариант:</th>
+        </tr>
+    @for(int i = 1; i <= DbOperations.GetCategoriesCount(speciality, parsedTicket); i-=-1)
+    {
+        <span class="categories" id="@i"></span>
+
+        int questionNum = 1;
+        <tr>
+            <th>Категория @i</th>
+            <th></th>
+            <th></th>
+        </tr>
+        <tr>
+            <td>@DbOperations.GetCategoryDescription($"{specialityId}_{parsedTicket}_{i}")</td>
+            <td></td>
+            <td></td>
+        </tr>
+            List<Questions> questions = DbOperations.GetAllQuestions(speciality, parsedTicket, i, DbOperations.GetSchoolId(User.FindFirstValue("school")));
+        @for(int j = 0; j < questions.Count; j = j + 2)
+        {   
+        <tr>
+            <td>Въпрос @questionNum</td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td class="vars">
+                <p style="white-space: pre-wrap; text-align: start;">Вариант 1: @questions[j].QuestionText</p>
+                <div id="variants-divider"></div>
+                <p style="white-space: pre-wrap; text-align: start;">Вариант 2: @questions[j + 1].QuestionText</p>
+            </td>
+            <td>@questions[j].Points т.</td>
+            <td>
+                <input id="user-school" type="hidden" value="@User.FindFirstValue("school")"/>
+                <input id="user-speciality" type="hidden" value="@User.FindFirstValue("speciality")"/>
+                <input id="question-id-@i-@j" type="hidden" value="@questions[j].Id"/>
+                <input id="question-points-@i-@j" type="hidden" value="@questions[j].Points"/>
+                <input id="used-question-points-@i-@j" type="hidden" value="0"/>
+                <select class="variant-selection variant-selection-@i variant-selection-@i-@j" id="select-variant-dropdown">
+                    <option value="0" selected >не се използва</option>
+                    <option value="@questions[j].Id" >1 вариант</option>
+                    <option value="@questions[j + 1].Id">2 вариант</option>
+                    <option value="@questions[j + rnd.Next(0, 2)].Id">случаен вариант</option>
+                </select>
+            </td>
+            
+        </tr>
+            questionNum++;
+        }
+        <tr>
+            <td></td>
+            <td></td>
+            <td class="category-points">
+                <span id="current-points-@i" class="points">0</span>/@DbOperations.GetCategoryPoints($"{specialityId}_{parsedTicket}_{i}") т.
+            </td>
+        </tr>
+        <tr>
+            <td colspan="3">
+                <hr/>
+            </td>
+        </tr>
+    }
+</table>
+
+<input id="generate-btn" type="button" disabled onclick="SendQuestions()" value="Генерирай изпитен билет">
+</form>
+
+
+<script>
+    var generateButton = document.getElementById('generate-btn');
+
+    var ticketDropdown = document.getElementById('ticket-dropdown');
+    ticketDropdown.addEventListener('change', () => {
+        location.replace(location.origin + "/Test?ticket=" + ticketDropdown.value);
+    })
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const param = urlParams.get('ticket');
+    ticketDropdown.value = param;
+    if (param == null) location.replace(location.origin + "/Test?ticket=1");
+    if (param == 5121) location.replace(location.origin + "/Logout");
+
+    let categories = document.getElementsByClassName('categories');
+    for (let i = 1; i <= categories.length; i++) {
+        let questions = document.getElementsByClassName('variant-selection-' + i);
+        let questionNum = 0;
+        for (let j = 0; j < questions.length; j++) {
+            questions[j].addEventListener('change', () => {
+                let num = j * 2;
+                if (questions[j].value != 0) {
+                    document.getElementById('used-question-points-' + i + '-' + num).value = document.getElementById('question-points-' + i + '-' + num).value;
+                }
+                else document.getElementById('used-question-points-' + i + '-' + num).value = 0;
+                CalculatePoints();
+            })
+        }
+    }
+
+    function addPoints(i, j) {
+        document.getElementById('used-question-points-' + i + '-' + j).value = document.getElementById('question-points-' + i + '-' + j).value;
+    }
+
+    function CalculatePoints() {
+        let categories = document.getElementsByClassName('categories');
+        let totalPoints = 0;
+        for(let i = 1; i <= categories.length; i++) {
+            let categoryPoints = 0;
+            let questions = document.getElementsByClassName('variant-selection-' + i);
+            for (let j = 0; j < questions.length; j++) {
+                console.log(i + ' ' + j);
+                categoryPoints += +document.getElementById('used-question-points-' + i + '-' + (j * 2)).value;
+            }
+            document.getElementById('current-points-' + i).innerHTML = +categoryPoints;
+        }
+        let allPoints = document.getElementsByClassName('points');
+        for(let i = 0; i < allPoints.length; i++){
+            totalPoints += +allPoints[i].innerHTML;
+        }
+
+        if (totalPoints == 100) {
+            generateButton.disabled = false;
+        }
+        else generateButton.disabled = true;
+    }
+
+    function SendQuestions() {
+        let questionIds = [];
+        let categories = document.getElementsByClassName('categories');
+        let school = document.getElementById('user-school');
+        let speciality = document.getElementById('user-speciality');
+        for(let i = 1; i <= categories.length; i++) {
+            let questions = document.getElementsByClassName('variant-selection-' + i);
+            for(let j = 0; j < questions.length; j++) {
+                let id = document.getElementsByClassName("variant-selection-" + i + "-" + (j * 2))[0].value;
+                questionIds.push(id);
+            }
+        }
+        $.ajax({
+            method: 'POST',
+            url: '/Test?handler=SendQuestions',
+            data:{
+                questionIds: questionIds,
+                ticket: ticketDropdown.value,
+                school: school.value,
+                speciality: speciality.value
+            },
+            xhrFields: {
+                responseType: 'blob'
+            },
+            success: function(data, textStatus, xhr){
+                let contentType = xhr.getResponseHeader("Content-Type");
+                if (contentType === "application/pdf") {
+                    let blob = new Blob([data], { type: contentType });
+                    let link = document.createElement("a");
+                    link.href = window.URL.createObjectURL(blob);
+                    link.download = "PDFTest.pdf";
+                    link.click();
+                }
+            },
+            error: function (xhr, status, err) {
+                console.log('nooo  ' + err);
+            }
+        })
+    }
+</script>
+
+<style>
+    .questions-table {
+        text-align: center;
+    }
+
+    #variants-divider {
+        border-left: 1.5px solid lightgray;
+        height: 90%;
+        width: 0;
+        margin: 10px;
+    }
+
+    .vars {
+        display: grid;
+        grid-template-columns: 49% 20px 49%;
+        align-items: start;
+    }
+
+    .variant-selection {
+        text-align: center;
+    }
+
+    .category-points {
+        font-weight: bold;
+        
+    }
+
+    #generate-btn {
+        height: 50px;
+        border-radius: 0.7rem;
+        font-size: 16px;
+        margin: auto;
+        padding: 5px 20px;
+        border: none;
+        color: white;
+        background-color: #3b7bf7;
+    }
+
+    #generate-btn:disabled {
+        color: gray;
+        background-color: lightgray;
+        cursor: not-allowed;
+    }
+
+    #questions-form {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+    
+</style>

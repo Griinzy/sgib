@@ -1,0 +1,79 @@
+﻿@using System.Security.Claims;
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - СГИБ</title>
+    <script src="~/js/site.js"></script> 
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/pdftest.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <link href='https://unpkg.com/css.gg@2.0.0/icons/css/adidas.css' rel='stylesheet'>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <nav class="nav navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+            <div class="container-nav">
+                <a class="navbar-brand" asp-area="" asp-page="/Index">СГИБ</a>
+                
+                <!--div class="d-sm-inline-flex justify-content-between">
+                    
+                </div-->
+                <div class="top-right-header">
+                    <ul class="navbar-set flex-grow-1">
+                        @if(User.Identity.IsAuthenticated)
+                        {
+                            <li class="user-button">
+                                <button class="user-btn nav-btn text-black">
+                                    <span class="material-symbols-outlined">account_circle</span>
+                                    @User.Identity.Name @User.FindFirstValue(ClaimTypes.Surname)
+                                </button>
+                                <div id="userModal" class="modal">
+                                    <div class="modal-content">
+                                        <h5><img width="30" height="30" src="~/images/names.png"> Име: @User.FindFirstValue(ClaimTypes.Name) @User.FindFirstValue(ClaimTypes.Surname)</h5>
+                                        <h5><img width="30" height="30" src="~/images/email.png"> Имейл: @User.FindFirstValue(ClaimTypes.Email)</h5>
+                                        @if(User.FindFirstValue("IsAdmin") == "True")
+                                        {
+                                            <a class="admin-button nav-btn" href="../Admin"><img width="30" height="30" src="~/images/admin.png">Админ меню</a>
+                                        }
+                                        <a href="../ChangePassword" id="reset-password-button" class="nav-btn text-white"><span class="material-symbols-outlined">key</span>Смени парола</a>
+                                        <a href="../Logout" id="logout-btn" class="nav-btn text-white"><span class="material-symbols-outlined">logout</span>Изход</a>
+                                    </div>
+                                </div>
+                            </li>
+                        }
+                        else
+                        {
+                            <a class="nav-link text-dark" asp-area="" asp-page="/Login">Вход</a>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </nav> 
+    </header>
+    <div class="container container-body">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; 2023 - СГИБ - <a asp-area="" asp-page="/Credits">Източници</a>
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

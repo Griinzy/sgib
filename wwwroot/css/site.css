@@ -1,0 +1,108 @@
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+    margin-bottom: 60px;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 16px;
+}
+
+/* ----- LOGIN ----- */
+
+/*
+
+.login-container {
+    text-align: center;
+    margin: 100px auto 0 auto;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    justify-content: flex-end;
+    max-width: 300px;
+    min-height: 320px;
+    background-color: #FFFFFF;
+    border-radius: .6rem;
+    border: solid 1px black;
+    box-shadow: 0px 5px 12px -1px rgba(0,0,0,0.2);
+}
+
+@media screen and (max-width: 750px) {
+    .login-container {
+        margin: 80px auto 0 auto;
+    }
+}
+
+.login-btn {
+    height: 42px;
+    color: #FFFFFF;
+    background-color: #3b7bf7;
+    border: none;
+    border-radius: .4rem;
+}
+
+.login-container > h1 {
+    margin: 20px 0 20px 0;
+}
+
+.login-container > input[type=email], input[type=password], input[type=checkbox] {
+    background-color: #f7f5f5;
+    padding: 10px;
+    border-radius: .4rem;
+    height: 36px;
+    border: solid .8px gray;
+    margin: 0;
+}
+*/
+
+.incorrect-password {
+    display: flex;
+    width: auto;
+    /*height: 18px;*/
+    align-items: flex-start;
+    color: red;
+    margin-left: 5px;
+}
+/*
+
+.checkbox {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 8px;
+    user-select: none;
+    margin: 0 0 15px 5px;
+}
+
+.checkbox > input {
+    accent-color: #3b7bf7;
+}
+
+.user-btn {
+    background-color: #EEEEEE;
+}
+
+.nav-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: .7rem;
+    border: none;
+    gap: 5px;
+    height: 35px;
+    padding: 18px;
+    transition: background-color .1s ease-in;
+}
+*/

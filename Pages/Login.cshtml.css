@@ -1,0 +1,132 @@
+﻿body {
+    background-color: #f7f5f5; /*#cbe6f7;*/
+}
+
+input:focus {
+    outline: none;
+    /*box-shadow: 0px 0px 3px 0px rgba(0,0,0,0.25) inset;*/
+}
+/*
+.login-container 
+{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    align-content: center;
+    gap: 10px;
+    margin: auto;
+    background-color: #dcebf5;
+    background-image: url('../Resources/image.jpg');
+    padding: 20px;
+    width: 280px;
+    aspect-ratio: 1 / 1.2;
+    box-shadow: 1px 10px 15px -1px rgba(0,0,0,0.19);
+    border-radius: 0.8rem;
+}
+    */
+
+
+.login-container {
+    text-align: center;
+    margin: 100px auto 0 auto;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    justify-content: flex-end;
+    max-width: 300px;
+    min-height: 320px;
+    background-color: #FFFFFF;
+    border-radius: .6rem;
+    border: solid 1px black;
+    box-shadow: 0px 5px 12px -1px rgba(0,0,0,0.2);
+}
+
+@media screen and (max-width: 750px) 
+{
+    .login-container
+    {
+        margin: 80px auto 0 auto;
+    }
+}
+
+.login-container > h1 
+{
+    margin: 20px 0 20px 0;
+}
+
+.login-container > input[type=email], input[type=password] {
+    background-color: #f7f5f5;
+    padding: 10px;
+    border-radius: .4rem;
+    height: 36px;
+    border: solid .8px gray;
+    margin: 0;
+}
+
+.incorrect-password {
+    display: flex;
+    width: auto;
+    align-items: flex-start;
+    color: red;
+    margin-left: 5px;
+}
+
+.checkbox 
+{
+    display: flex;
+    justify-content: flex-start;
+    gap: 8px;
+    user-select: none;
+    margin: 0 0 15px 5px;
+}
+
+.checkbox > input {
+    accent-color: #3b7bf7;
+}
+
+.login-btn {
+    height: 42px;
+    color: #FFFFFF;
+    background-color: #3b7bf7;
+    border: none;
+    border-radius: .4rem;
+}
+
+
+/*
+button
+{
+    position: relative;
+    border: none;
+    transition: .4s ease-in;
+    z-index: 1;
+}
+
+button::before,
+button::after 
+{
+    position: absolute;
+    content: "";
+    z-index: -1;
+}
+
+.login-btn::after
+{
+    height: 0;
+    left: 0;
+    bottom: 0;
+    transition-duration: 0.6s;
+    width: 100%;
+}
+.login-btn:hover::after {
+    height: 100%;
+}
+.login-btn:hover {
+    box-shadow: inset -10.5em 0 0 0
+    #ff96ad, inset 10.5em 0 0 0 #ff96ad;
+    
+    background: #cec9c9;
+    box-shadow: 0 0 2px #cec9c9, 0 0 50px #cec9c9, 0 0 100px #cec9c9, 0 0 150px #cec9c9;
+}
+*/

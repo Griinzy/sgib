@@ -1,0 +1,29 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Pages\Tests\**" />
+    <Content Remove="Pages\Tests\**" />
+    <EmbeddedResource Remove="Pages\Tests\**" />
+    <None Remove="Pages\Tests\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Pages\Credits" />
+    <None Remove="Pages\NewFile.txt" />
+    <None Remove="Pages\Shared\NewFile.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MySql.Data" Version="8.2.0" />
+    <PackageReference Include="PdfSharp" Version="1.50.5147" />
+    <PackageReference Include="PDFsharp-MigraDoc" Version="6.0.0" />
+    <PackageReference Include="System.Drawing.Common" Version="7.0.0" />
+  </ItemGroup>
+
+</Project>

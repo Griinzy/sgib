@@ -1,0 +1,97 @@
+﻿@page
+@model pdftest.Pages.QuestionsModel
+@using System.Security.Claims;
+@{
+    string ticket = System.Web.HttpUtility.ParseQueryString(HttpContext.Request.QueryString.Value).Get("ticket");
+    int parsedTicket;
+    int.TryParse(ticket, out parsedTicket);
+    string speciality = User.FindFirstValue("speciality");
+}
+
+<div>
+    <select name="ticketNumber" id="ticket-dropdown">
+        @*<option selected disabled>Изпитен билет</option>*@
+        <option value="1" selected>Билет 1</option>
+        <option value="2">Билет 2</option>
+        <option value="3">Билет 3</option>
+        <option value="4">Билет 4</option>
+        <option value="5">Билет 5</option>
+        <option value="6">Билет 6</option>
+        <option value="7">Билет 7</option>
+        <option value="8">Билет 8</option>
+        <option value="9">Билет 9</option>
+        <option value="10">Билет 10</option>
+        <option value="11">Билет 11</option>
+        <option value="12">Билет 12</option>
+        <option value="13">Билет 13</option>
+        <option value="14">Билет 14</option>
+        <option value="15">Билет 15</option>
+        <option value="16">Билет 16</option>
+        <option value="17">Билет 17</option>
+        <option value="18">Билет 18</option>
+    </select>
+</div>
+<div>
+    @if(parsedTicket != null)
+    {
+        for (int i = 1; i <= DbOperations.GetCategoriesCount(speciality, parsedTicket); i++)
+        {
+            int questionNum = 1;
+            int specialityId = DbOperations.GetSpecialityId(speciality);
+            <hr/>
+            <h4 class="cat-number">Категория @i</h4>
+            <h4 class="category-text">@DbOperations.GetCategoryDescription($"{specialityId}_{parsedTicket}_{i}")</h4>
+            <br />
+            List<Questions> questions = DbOperations.GetAllQuestions(speciality, parsedTicket, i, DbOperations.GetSchoolId(User.FindFirstValue("school")));
+            for(int j = 0; j < questions.Count; j = j + 2)
+            {
+                <h5 class="question-number">Задача @questionNum (@questions[j].Points т.)</h5>
+                <div class="view-questions-var-container">
+                    <div class="question-variant-a">
+                        <h3 class="question-text">@questions[j].QuestionText</h3>
+                        <div class="view-questions-answers">
+                                @if(questions[j].AnswerA != null)
+                                {
+                                    <div class="question-answers">
+                                        <p>А) @questions[j].AnswerA</p>
+                                        <p>Б) @questions[j].AnswerB</p>
+                                        <p>В) @questions[j].AnswerC</p>
+                                        <p>Г) @questions[j].AnswerD</p>
+                                    </div>
+                                }
+                        </div>
+                    </div>
+                    <div id="variants-divider"></div>
+                    <div class="question-variant-b">
+                        <h3 class="question-text">@questions[j + 1].QuestionText</h3>
+                        <div class="view-questions-answers">
+                            @if (questions[j + 1].AnswerA != null)
+                            {
+                                <div class="question-answers">
+                                    <p>А) @questions[j + 1].AnswerA</p>
+                                    <p>Б) @questions[j + 1].AnswerB</p>
+                                    <p>В) @questions[j + 1].AnswerC</p>
+                                    <p>Г) @questions[j + 1].AnswerD</p>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+                questionNum++;
+            }
+        }
+    }
+    
+</div>
+<script>
+    var ticketDropdown = document.getElementById('ticket-dropdown');
+    ticketDropdown.addEventListener('change', () => {
+        location.replace(location.origin + "/Questions?ticket=" + ticketDropdown.value);
+    })
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const param = urlParams.get('ticket');
+    ticketDropdown.value = param;
+    if(param == null) location.replace(location.origin + "/Questions?ticket=1"); 
+    if(param == 5121) location.replace(location.origin + "/Logout");
+</script>
