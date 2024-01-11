@@ -21,7 +21,7 @@ namespace pdftest.Pages
         }
 
         static bool resolved = false;
-        public static byte[] Generate(int[] questionsIds, string ticket, string school, string speciality, string ticketDescription)
+        public static byte[] Generate(int[] questionsIds, string ticket, string school, string speciality, string ticketDescription, bool answerList)
         {
             SetFontResolver(resolved);
             resolved = true;
@@ -65,10 +65,34 @@ namespace pdftest.Pages
                 points.Format.Font.Size = 15;
                 points.AddFormattedText($"{question.Points} т.");
 
-                if (question.AnswerA != null)
+                if(question.AnswerA != null)
                 {
                     questionText.AddFormattedText($"А) {question.AnswerA}\nБ) {question.AnswerB}\nВ) {question.AnswerC}\nГ) {question.AnswerD}\n");
                 }
+            }
+
+            if(answerList == true)
+            {
+                Section answerSection = doc.AddSection();
+
+                Paragraph answersSchoolName = answerSection.AddParagraph();
+                answersSchoolName.Format.Alignment = ParagraphAlignment.Center;
+                answersSchoolName.Format.Font.Name = "Times New Roman";
+                answersSchoolName.Format.Font.Size = 18;
+                answersSchoolName.Format.Font.Bold = true;
+                answersSchoolName.AddFormattedText($"{school}");
+
+                Paragraph answerTicketText = answerSection.AddParagraph();
+                answerTicketText.Format.Alignment = ParagraphAlignment.Center;
+                answerTicketText.Format.Font.Name = "Times New Roman";
+                answerTicketText.Format.Font.Size = 16;
+                answerTicketText.AddFormattedText($"Изпитен тема №{ticket}: {ticketDescription}");
+
+                Paragraph answerSpecialityText = answerSection.AddParagraph();
+                answerSpecialityText.Format.Alignment = ParagraphAlignment.Center;
+                answerSpecialityText.Format.Font.Name = "Times New Roman";
+                answerSpecialityText.Format.Font.Size = 16;
+                answerSpecialityText.AddFormattedText($"Специалност: {speciality}");
             }
 
             PdfDocumentRenderer renderer = new PdfDocumentRenderer();

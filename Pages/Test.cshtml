@@ -103,7 +103,15 @@
     }
 </table>
 
+<div class="answers-key">
+    <label class="switch">
+            <input type="checkbox" name="answerList" id="answer-list" value="true" />
+        <span class="slider"></span>
+    </label>
+    <h6>Генерирай ключ с отговори</h6>
+</div>
 <input id="generate-btn" type="button" disabled onclick="SendQuestions()" value="Генерирай изпитен билет">
+    
 </form>
 
 
@@ -176,6 +184,7 @@
                 questionIds.push(id);
             }
         }
+        let answerList = document.getElementById('answer-list');
         $.ajax({
             method: 'POST',
             url: '/Test?handler=SendQuestions',
@@ -183,7 +192,8 @@
                 questionIds: questionIds,
                 ticket: ticketDropdown.value,
                 school: school.value,
-                speciality: speciality.value
+                speciality: speciality.value,
+                answerList: answerList.value
             },
             xhrFields: {
                 responseType: 'blob'
@@ -255,5 +265,70 @@
         align-items: center;
         justify-content: center;
     }
-    
+
+    .switch {
+        padding-right: 5px;
+        position: relative;
+        display: inline-block;
+        width: 40px;
+        height: 22px;
+    }
+
+    .switch > input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        -webkit-transition: .4s;
+        transition: .4s;
+    }
+
+    .slider:before {
+        position: absolute;
+        content: "";
+        height: 17px;
+        width: 17px;
+        left: 2px;
+        bottom: 2.5px;
+        background-color: white;
+        -webkit-transition: .4s;
+        transition: .4s;
+    }
+
+    input:checked + .slider {
+        background-color: #3b7bf7;
+    }
+
+    input:focus + .slider {
+        box-shadow: 0 0 1px #3b7bf7;
+    }
+
+    input:checked + .slider:before {
+        -webkit-transform: translateX(20px);
+        -ms-transform: translateX(20px);
+        transform: translateX(20px);
+    }
+
+    .slider {
+        border-radius: 22px;
+    }
+
+    .slider:before {
+        border-radius: 50%;
+    }
+
+    .answers-key{
+        display: flex;
+        flex-direction: row;
+        gap: 5px;
+    }
 </style>

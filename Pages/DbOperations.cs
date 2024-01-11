@@ -14,7 +14,7 @@ namespace pdftest.Pages
         static string mishoCon = "Data source=DESKTOP-BIJEL7I; Database=PdfTests; User=User1; Pwd=admin";
         static string mishoCon2 = "Data source=localhost; Database=PdfTests; User=root; Pwd=admin";
         static string[] conStrings = { schoolCon, kalinCon, mishoCon, mishoCon2 };
-        public static string connection = conStrings[3];
+        public static string connection = conStrings[0];
 
         public static int GetGeneratedTestsCount()
         {

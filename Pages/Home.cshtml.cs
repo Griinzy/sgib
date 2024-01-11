@@ -25,6 +25,7 @@ namespace pdftest.Pages
             bool correctAnswerA2, bool correctAnswerB2, bool correctAnswerC2, bool correctAnswerD2,
             string openAnswer1, string openAnswer2)
         {
+            Console.Write(correctAnswerD2);
             DbOperations.AddNewQuestion(speciality, int.Parse(ticketNumber), category, 
                 questionText1, questionText2, 
                 answerA1, answerB1, answerC1, answerD1, 
@@ -33,6 +34,7 @@ namespace pdftest.Pages
                 correctAnswerA2, correctAnswerB2, correctAnswerC2, correctAnswerD2,
                 openAnswer1, openAnswer2,
                 int.Parse(questionPoints),
+
                 DbOperations.GetSchoolId(User.FindFirstValue("school")));
         }
     }
