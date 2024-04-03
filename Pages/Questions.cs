@@ -12,5 +12,6 @@
         public string AnswerC { get; set; }
         public string AnswerD { get; set; }
         public int Points { get; set; }
+        public string CorrectAnswers { get; set; }
     }
 }

@@ -17,7 +17,7 @@ namespace pdftest.Pages
 
         public static void SetFontResolver(bool resolved)
         {
-            if(!resolved) GlobalFontSettings.FontResolver = new FileFontResolver();
+            if (!resolved) GlobalFontSettings.FontResolver = new FileFontResolver();
         }
 
         static bool resolved = false;
@@ -50,14 +50,14 @@ namespace pdftest.Pages
             specialityText.Format.Font.Size = 16;
             specialityText.AddFormattedText($"Специалност: {speciality}");
 
-            for(int i = 1; i <= questionsIds.Length; i++)
+            for (int i = 1; i <= questionsIds.Length; i++)
             {
                 Paragraph questionText = section.AddParagraph();
                 questionText.Format.Alignment = ParagraphAlignment.Left;
                 questionText.Format.Font.Name = "Times New Roman";
                 questionText.Format.Font.Size = 16;
                 Questions question = DbOperations.GetQuestionById(questionsIds[i - 1]);
-                questionText.AddFormattedText($"{i}. {question.QuestionText}");
+                questionText.AddFormattedText($"{i}. {question.QuestionText} \n");
 
                 Paragraph points = section.AddParagraph();
                 points.Format.Alignment = ParagraphAlignment.Right;
@@ -65,13 +65,18 @@ namespace pdftest.Pages
                 points.Format.Font.Size = 15;
                 points.AddFormattedText($"{question.Points} т.");
 
-                if(question.AnswerA != null)
+                if (question.AnswerA != null)
                 {
                     questionText.AddFormattedText($"А) {question.AnswerA}\nБ) {question.AnswerB}\nВ) {question.AnswerC}\nГ) {question.AnswerD}\n");
                 }
             }
 
-            if(answerList == true)
+            Paragraph testP = section.AddParagraph();
+            testP.Format.Alignment = ParagraphAlignment.Center;
+            testP.Format.Font.Name = "Times New Roman";
+            testP.Format.Font.Size = 15;
+
+            if (answerList == true)
             {
                 Section answerSection = doc.AddSection();
 
@@ -93,13 +98,51 @@ namespace pdftest.Pages
                 answerSpecialityText.Format.Font.Name = "Times New Roman";
                 answerSpecialityText.Format.Font.Size = 16;
                 answerSpecialityText.AddFormattedText($"Специалност: {speciality}");
+
+                for (int i = 1; i <= questionsIds.Length; i++)
+                {
+                    Questions question = DbOperations.GetQuestionById(questionsIds[i - 1]);
+                    Paragraph questionText = answerSection.AddParagraph();
+                    questionText.Format.Alignment = ParagraphAlignment.Left;
+                    questionText.Format.Font.Name = "Times New Roman";
+                    questionText.Format.Font.Size = 16;
+
+                    if (question.AnswerA != null && question.CorrectAnswers != null)
+                    {
+                        questionText.AddFormattedText($"\n{i}. {question.QuestionText} \n");
+                        int[] answers = question.CorrectAnswers.Split(',').Select(int.Parse).ToArray();
+                        foreach (int answer in answers)
+                        {
+                            switch (answer)
+                            {
+                                case 1:
+                                    questionText.AddFormattedText("Ä) " + question.AnswerA + "\n");
+                                    break;
+                                case 2:
+                                    questionText.AddFormattedText("Б) " + question.AnswerB + "\n");
+                                    break;
+                                case 3:
+                                    questionText.AddFormattedText("В) " + question.AnswerC + "\n");
+                                    break;
+                                case 4:
+                                    questionText.AddFormattedText("Г) " + question.AnswerD + "\n");
+                                    break;
+                            }
+                        }
+                    }
+                    else if (question.AnswerA == null && question.CorrectAnswers != null)
+                    {
+                        questionText.AddFormattedText($"\n{i}. {question.QuestionText} \n");
+                        questionText.AddFormattedText($"Примерен отговор: {question.CorrectAnswers}");
+                    }
+                }
             }
 
             PdfDocumentRenderer renderer = new PdfDocumentRenderer();
             renderer.Document = doc;
             renderer.RenderDocument();
 
-            using(MemoryStream stream = new MemoryStream())
+            using (MemoryStream stream = new MemoryStream())
             {
                 renderer.PdfDocument.Save(stream);
                 return stream.ToArray();

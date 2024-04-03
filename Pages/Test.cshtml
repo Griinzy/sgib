@@ -41,71 +41,75 @@
             <th>Точки:</th>
             <th>Вариант:</th>
         </tr>
-    @for(int i = 1; i <= DbOperations.GetCategoriesCount(speciality, parsedTicket); i-=-1)
-    {
-        <span class="categories" id="@i"></span>
+        @for (int i = 1; i <= DbOperations.GetCategoriesCount(speciality, parsedTicket); i -= -1)
+        {
+            if (DbOperations.GetCategoryDescription($"{specialityId}_{parsedTicket}_{i}") != string.Empty)
+            {
 
-        int questionNum = 1;
-        <tr>
-            <th>Категория @i</th>
-            <th></th>
-            <th></th>
-        </tr>
-        <tr>
-            <td>@DbOperations.GetCategoryDescription($"{specialityId}_{parsedTicket}_{i}")</td>
-            <td></td>
-            <td></td>
-        </tr>
-            List<Questions> questions = DbOperations.GetAllQuestions(speciality, parsedTicket, i, DbOperations.GetSchoolId(User.FindFirstValue("school")));
-        @for(int j = 0; j < questions.Count; j = j + 2)
-        {   
-        <tr>
-            <td>Въпрос @questionNum</td>
-            <td></td>
-            <td></td>
-        </tr>
-        <tr>
-            <td class="vars">
-                <p style="white-space: pre-wrap; text-align: start;">Вариант 1: @questions[j].QuestionText</p>
-                <div id="variants-divider"></div>
-                <p style="white-space: pre-wrap; text-align: start;">Вариант 2: @questions[j + 1].QuestionText</p>
-            </td>
-            <td>@questions[j].Points т.</td>
-            <td>
-                <input id="user-school" type="hidden" value="@User.FindFirstValue("school")"/>
-                <input id="user-speciality" type="hidden" value="@User.FindFirstValue("speciality")"/>
-                <input id="question-id-@i-@j" type="hidden" value="@questions[j].Id"/>
-                <input id="question-points-@i-@j" type="hidden" value="@questions[j].Points"/>
-                <input id="used-question-points-@i-@j" type="hidden" value="0"/>
-                <select class="variant-selection variant-selection-@i variant-selection-@i-@j" id="select-variant-dropdown">
-                    <option value="0" selected >не се използва</option>
-                    <option value="@questions[j].Id" >1 вариант</option>
-                    <option value="@questions[j + 1].Id">2 вариант</option>
-                    <option value="@questions[j + rnd.Next(0, 2)].Id">случаен вариант</option>
-                </select>
-            </td>
-            
-        </tr>
-            questionNum++;
+                <span class="categories" id="@i"></span>
+
+                int questionNum = 1;
+                <tr>
+                    <th>Категория @i</th>
+                    <th></th>
+                    <th></th>
+                </tr>
+                <tr>
+                    <td>@DbOperations.GetCategoryDescription($"{specialityId}_{parsedTicket}_{i}")</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                List<Questions> questions = DbOperations.GetAllQuestions(speciality, parsedTicket, i, DbOperations.GetSchoolId(User.FindFirstValue("school")));
+                @for (int j = 0; j < questions.Count; j = j + 2)
+                {
+                    <tr>
+                        <td>Въпрос @questionNum</td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="vars">
+                            <p style="white-space: pre-wrap; text-align: start;">Вариант 1: @questions[j].QuestionText</p>
+                            <div id="variants-divider"></div>
+                            <p style="white-space: pre-wrap; text-align: start;">Вариант 2: @questions[j + 1].QuestionText</p>
+                        </td>
+                        <td>@questions[j].Points т.</td>
+                        <td>
+                            <input id="user-school" type="hidden" value="@User.FindFirstValue("school")" />
+                            <input id="user-speciality" type="hidden" value="@User.FindFirstValue("speciality")" />
+                            <input id="question-id-@i-@j" type="hidden" value="@questions[j].Id" />
+                            <input id="question-points-@i-@j" type="hidden" value="@questions[j].Points" />
+                            <input id="used-question-points-@i-@j" type="hidden" value="0" />
+                            <select class="variant-selection variant-selection-@i variant-selection-@i-@j" id="select-variant-dropdown">
+                                <option value="0" selected>не се използва</option>
+                                <option value="@questions[j].Id">1 вариант</option>
+                                <option value="@questions[j + 1].Id">2 вариант</option>
+                                <option value="@questions[j + rnd.Next(0, 2)].Id">случаен вариант</option>
+                            </select>
+                        </td>
+
+                    </tr>
+                    questionNum++;
+                }
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td class="category-points">
+                        <span id="current-points-@i" class="points">0</span>/@DbOperations.GetCategoryPoints($"{specialityId}_{parsedTicket}_{i}") т.
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="3">
+                        <hr />
+                    </td>
+                </tr>
+            }
         }
-        <tr>
-            <td></td>
-            <td></td>
-            <td class="category-points">
-                <span id="current-points-@i" class="points">0</span>/@DbOperations.GetCategoryPoints($"{specialityId}_{parsedTicket}_{i}") т.
-            </td>
-        </tr>
-        <tr>
-            <td colspan="3">
-                <hr/>
-            </td>
-        </tr>
-    }
 </table>
 
 <div class="answers-key">
     <label class="switch">
-            <input type="checkbox" name="answerList" id="answer-list" value="true" />
+            <input type="checkbox" name="answerList" id="answer-list" />
         <span class="slider"></span>
     </label>
     <h6>Генерирай ключ с отговори</h6>
@@ -185,6 +189,7 @@
             }
         }
         let answerList = document.getElementById('answer-list');
+        console.log(answerList.checked);
         $.ajax({
             method: 'POST',
             url: '/Test?handler=SendQuestions',
@@ -193,7 +198,7 @@
                 ticket: ticketDropdown.value,
                 school: school.value,
                 speciality: speciality.value,
-                answerList: answerList.value
+                answerList: answerList.checked
             },
             xhrFields: {
                 responseType: 'blob'

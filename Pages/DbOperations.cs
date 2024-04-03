@@ -14,7 +14,7 @@ namespace pdftest.Pages
         static string mishoCon = "Data source=DESKTOP-BIJEL7I; Database=PdfTests; User=User1; Pwd=admin";
         static string mishoCon2 = "Data source=localhost; Database=PdfTests; User=root; Pwd=admin";
         static string[] conStrings = { schoolCon, kalinCon, mishoCon, mishoCon2 };
-        public static string connection = conStrings[0];
+        public static string connection = conStrings[3];
 
         public static int GetGeneratedTestsCount()
         {
@@ -312,7 +312,7 @@ namespace pdftest.Pages
                     cmd.Parameters.AddWithValue("lastname", lastname);
                     cmd.Parameters.AddWithValue("email", email);
                     byte[] newPasswordBytes = System.Text.Encoding.UTF8.GetBytes(password);
-                    cmd.Parameters.AddWithValue("password", System.Convert.ToBase64String(newPasswordBytes)); 
+                    cmd.Parameters.AddWithValue("password", System.Convert.ToBase64String(newPasswordBytes));
                     cmd.Parameters.AddWithValue("specialityId", specialityId);
                     cmd.Parameters.AddWithValue("isadmin", isadmin);
                     cmd.Parameters.AddWithValue("schoolId", schoolId);
@@ -326,9 +326,9 @@ namespace pdftest.Pages
             }
             con.Close();
         }
-        public static void AddNewQuestion(string speciality, int ticket, string category, 
-            string questionText1, string questionText2, 
-            string answerA1, string answerB1, string answerC1, string answerD1, 
+        public static void AddNewQuestion(string speciality, int ticket, string category,
+            string questionText1, string questionText2,
+            string answerA1, string answerB1, string answerC1, string answerD1,
             string answerA2, string answerB2, string answerC2, string answerD2,
             bool correctAnswerA1, bool correctAnswerB1, bool correctAnswerC1, bool correctAnswerD1,
             bool correctAnswerA2, bool correctAnswerB2, bool correctAnswerC2, bool correctAnswerD2,
@@ -339,19 +339,19 @@ namespace pdftest.Pages
 
             List<int> correctAnswers1 = new List<int>();
             List<int> correctAnswers2 = new List<int>();
-            if(openAnswer1 == null)
+            if (openAnswer1 == null)
             {
                 bool[] answers1 = { correctAnswerA1, correctAnswerB1, correctAnswerC1, correctAnswerD1 };
                 bool[] answers2 = { correctAnswerA2, correctAnswerB2, correctAnswerC2, correctAnswerD2 };
 
 
-                for(int i = 0; i < answers1.Length; i++)
+                for (int i = 0; i < answers1.Length; i++)
                 {
-                    if(answers1[i]) correctAnswers1.Add(i + 1);
+                    if (answers1[i]) correctAnswers1.Add(i + 1);
                 }
-                for(int i = 0; i < answers2.Length; i++)
+                for (int i = 0; i < answers2.Length; i++)
                 {
-                    if(answers2[i]) correctAnswers2.Add(i + 1);
+                    if (answers2[i]) correctAnswers2.Add(i + 1);
                 }
             }
 
@@ -374,7 +374,7 @@ namespace pdftest.Pages
                 cmd.Parameters.AddWithValue("answerD1", answerD1);
                 cmd.Parameters.AddWithValue("points", points);
                 cmd.Parameters.AddWithValue("@school", school);
-                if(openAnswer1 != null) cmd.Parameters.AddWithValue("@correctAnswer", openAnswer1);
+                if (openAnswer1 != null) cmd.Parameters.AddWithValue("@correctAnswer", openAnswer1);
                 else cmd.Parameters.AddWithValue("@correctAnswer", string.Join(',', correctAnswers1));
                 cmd.ExecuteNonQuery();
 
@@ -539,7 +539,7 @@ namespace pdftest.Pages
                 con.Open();
                 MySqlCommand cmd = new MySqlCommand();
                 cmd.Connection = con;
-                cmd.CommandText = "Select questionText, answerA, answerB, answerC, answerD, points from questions where id=@id;";
+                cmd.CommandText = "Select questionText, answerA, answerB, answerC, answerD, points, correctAnswer from questions where id=@id;";
                 cmd.Parameters.AddWithValue("@id", id);
                 MySqlDataReader rdr = cmd.ExecuteReader();
                 using (rdr)
@@ -552,6 +552,7 @@ namespace pdftest.Pages
                         question.AnswerC = rdr.IsDBNull(rdr.GetOrdinal("answerC")) ? null : rdr.GetString("answerC");
                         question.AnswerD = rdr.IsDBNull(rdr.GetOrdinal("answerD")) ? null : rdr.GetString("answerD");
                         question.Points = rdr.GetInt32(5);
+                        question.CorrectAnswers = rdr.IsDBNull(rdr.GetOrdinal("correctAnswer")) ? null : rdr.GetString("correctAnswer");
                     }
                     rdr.Close();
                 }
@@ -606,7 +607,7 @@ namespace pdftest.Pages
             con.Close();
         }
 
-        public static void AddSpeciality(string speciality) 
+        public static void AddSpeciality(string speciality)
         {
             MySqlConnection con = new MySqlConnection(connection);
             con.Open();
@@ -652,7 +653,7 @@ namespace pdftest.Pages
             string newPassword = System.Convert.ToBase64String(newPasswordBytes);
 
             MySqlConnection con = new MySqlConnection(connection);
-            using(con)
+            using (con)
             {
                 con.Open();
                 MySqlCommand cmd = new MySqlCommand();
@@ -674,7 +675,7 @@ namespace pdftest.Pages
                 MySqlCommand cmd = new MySqlCommand("Select id from schools where schoolName=@name;", con);
                 cmd.Parameters.AddWithValue("@name", school);
                 MySqlDataReader rdr = cmd.ExecuteReader();
-                while(rdr.Read())
+                while (rdr.Read())
                 {
                     schoolId = rdr.GetInt32(0);
                 }
