@@ -42,13 +42,15 @@ namespace pdftest.Pages
             ticketText.Format.Alignment = ParagraphAlignment.Center;
             ticketText.Format.Font.Name = "Times New Roman";
             ticketText.Format.Font.Size = 16;
-            ticketText.AddFormattedText($"Изпитен тема №{ticket}: {ticketDescription}");
+            ticketText.AddFormattedText($"Изпитна тема №{ticket}: {ticketDescription}");
 
             Paragraph specialityText = section.AddParagraph();
             specialityText.Format.Alignment = ParagraphAlignment.Center;
             specialityText.Format.Font.Name = "Times New Roman";
             specialityText.Format.Font.Size = 16;
             specialityText.AddFormattedText($"Специалност: {speciality}");
+            specialityText.AddFormattedText("\n");
+            specialityText.AddFormattedText("\n");
 
             for (int i = 1; i <= questionsIds.Length; i++)
             {
@@ -57,7 +59,7 @@ namespace pdftest.Pages
                 questionText.Format.Font.Name = "Times New Roman";
                 questionText.Format.Font.Size = 16;
                 Questions question = DbOperations.GetQuestionById(questionsIds[i - 1]);
-                questionText.AddFormattedText($"{i}. {question.QuestionText} \n");
+                questionText.AddFormattedText($"\n{i}. {question.QuestionText} \n");
 
                 Paragraph points = section.AddParagraph();
                 points.Format.Alignment = ParagraphAlignment.Right;
@@ -65,9 +67,52 @@ namespace pdftest.Pages
                 points.Format.Font.Size = 15;
                 points.AddFormattedText($"{question.Points} т.");
 
+                Paragraph answersParagraph = section.AddParagraph();
+                answersParagraph.Format.Alignment = ParagraphAlignment.Left;
+                answersParagraph.Format.Font.Name = "Times New Roman";
+                answersParagraph.Format.Font.Size = 15;
+
                 if (question.AnswerA != null)
                 {
-                    questionText.AddFormattedText($"А) {question.AnswerA}\nБ) {question.AnswerB}\nВ) {question.AnswerC}\nГ) {question.AnswerD}\n");
+                    answersParagraph.AddFormattedText($"А) {question.AnswerA}\nБ) {question.AnswerB}\nВ) {question.AnswerC}\nГ) {question.AnswerD}\n");
+                }
+                else if(question.AnswerA == null)
+                {
+                    switch(question.Points)
+                    {
+                        case 4:
+                            {
+                                for (int j = 1; j < 5; j++)
+                                {
+                                    answersParagraph.AddFormattedText("\n");
+                                }
+                                break;
+                            }
+                        case 6:
+                            {
+                                for (int j = 1; j < 8; j++)
+                                {
+                                    answersParagraph.AddFormattedText("\n");
+                                }
+                                break;
+                            }
+                        case 8:
+                            {
+                                for (int j = 1; j < 11; j++)
+                                {
+                                    answersParagraph.AddFormattedText("\n");
+                                }
+                                break;
+                            }
+                        default:
+                            {
+                                for (int j = 1; j < 5; j++)
+                                {
+                                    answersParagraph.AddFormattedText("\n");
+                                }
+                                break;
+                            }
+                    }
                 }
             }
 
@@ -91,13 +136,13 @@ namespace pdftest.Pages
                 answerTicketText.Format.Alignment = ParagraphAlignment.Center;
                 answerTicketText.Format.Font.Name = "Times New Roman";
                 answerTicketText.Format.Font.Size = 16;
-                answerTicketText.AddFormattedText($"Изпитен тема №{ticket}: {ticketDescription}");
+                answerTicketText.AddFormattedText($"Изпитна тема №{ticket}: {ticketDescription}");
 
                 Paragraph answerSpecialityText = answerSection.AddParagraph();
                 answerSpecialityText.Format.Alignment = ParagraphAlignment.Center;
                 answerSpecialityText.Format.Font.Name = "Times New Roman";
                 answerSpecialityText.Format.Font.Size = 16;
-                answerSpecialityText.AddFormattedText($"Специалност: {speciality}");
+                answerSpecialityText.AddFormattedText($"Специалност: {speciality} \n");
 
                 for (int i = 1; i <= questionsIds.Length; i++)
                 {
@@ -116,7 +161,7 @@ namespace pdftest.Pages
                             switch (answer)
                             {
                                 case 1:
-                                    questionText.AddFormattedText("Ä) " + question.AnswerA + "\n");
+                                    questionText.AddFormattedText("A) " + question.AnswerA + "\n");
                                     break;
                                 case 2:
                                     questionText.AddFormattedText("Б) " + question.AnswerB + "\n");
