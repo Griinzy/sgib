@@ -12,6 +12,7 @@ namespace pdftest.Pages
     {
         public FileResult OnPostSendQuestions(int[] questionIds, string ticket, string school, string speciality, bool answerList)
         {
+            DbOperations.IncreaseGeneratedTestsCount();
             string ticketDescription = DbOperations.GetTicketDescription(DbOperations.GetSpecialityId(speciality), int.Parse(ticket));
             Console.WriteLine(answerList);
             questionIds = questionIds.Where(x => x != 0).ToArray();

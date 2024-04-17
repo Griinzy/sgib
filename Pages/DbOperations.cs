@@ -2,6 +2,7 @@
 using System.Runtime.CompilerServices;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc.Formatters;
+using Microsoft.AspNetCore.Server.Kestrel.Core.Features;
 using MySql.Data.MySqlClient;
 using Org.BouncyCastle.Asn1.X509;
 
@@ -40,30 +41,30 @@ namespace pdftest.Pages
             con.Close();
             return testsCount;
         }
-        public static int GetQuestionsCount()
-        {
-            int questionsCount = 0;
+        //public static int GetQuestionsCount()
+        //{
+        //    int questionsCount = 0;
 
-            MySqlConnection con = new MySqlConnection(connection);
-            con.Open();
-            using (con)
-            {
-                MySqlCommand cmd = new MySqlCommand();
-                cmd.Connection = con;
-                cmd.CommandText = "Select questionscount from TestStatistics";
-                MySqlDataReader rdr = cmd.ExecuteReader();
-                using (rdr)
-                {
-                    while (rdr.Read())
-                    {
-                        questionsCount = rdr.GetInt32(0);
-                    }
-                    rdr.Close();
-                }
-            }
-            con.Close();
-            return questionsCount;
-        }
+        //    MySqlConnection con = new MySqlConnection(connection);
+        //    con.Open();
+        //    using (con)
+        //    {
+        //        MySqlCommand cmd = new MySqlCommand();
+        //        cmd.Connection = con;
+        //        cmd.CommandText = "Select questionscount from TestStatistics";
+        //        MySqlDataReader rdr = cmd.ExecuteReader();
+        //        using (rdr)
+        //        {
+        //            while (rdr.Read())
+        //            {
+        //                questionsCount = rdr.GetInt32(0);
+        //            }
+        //            rdr.Close();
+        //        }
+        //    }
+        //    con.Close();
+        //    return questionsCount;
+        //}
         public static int GetSpecialitiesCount()
         {
             int specialitiesCount = 0;
@@ -683,6 +684,49 @@ namespace pdftest.Pages
             }
             con.Close();
             return schoolId;
+        }
+        public static void IncreaseGeneratedTestsCount()
+        {
+            int generatedTests = 0;
+            MySqlConnection con = new MySqlConnection(connection);
+            con.Open();
+            using (con)
+            {
+                MySqlCommand cmd = new MySqlCommand("Select generatedTests from teststatistics;", con);
+                MySqlDataReader rdr = cmd.ExecuteReader();
+                while (rdr.Read())
+                {
+                    generatedTests = rdr.GetInt32(0);
+                }
+                rdr.Close();
+
+                generatedTests++;
+                MySqlCommand cmd2 = new MySqlCommand("Update teststatistics set generatedtests = @generatedTests where id = 1;", con);
+                cmd2.Parameters.AddWithValue("@generatedTests", generatedTests);
+                cmd2.ExecuteNonQuery();
+            }
+            con.Close();
+        }
+        public static int GetQuestionsCount()
+        {
+            int count = 0;
+            MySqlConnection con = new MySqlConnection(connection);
+            con.Open();
+            using (con)
+            {
+                MySqlCommand cmd = new MySqlCommand("Select count(questionCategory) from questions;", con);
+                MySqlDataReader rdr = cmd.ExecuteReader();
+                using (rdr)
+                {
+                    while (rdr.Read())
+                    {
+                        count = (rdr.GetInt32(0) / 2);
+                    }
+                }
+                rdr.Close();
+            }
+            con.Close();
+            return count;
         }
     }
 }
